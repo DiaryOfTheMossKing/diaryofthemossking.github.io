@@ -6,3 +6,5 @@ description = "Finding a (over engineered?) solution to one-way platform edge co
 draft = false
 +++
 
+
+{{< fig_cmp src1="/gifs/BombBeetle.gif" src2="/gifs/BombBeetle.gif" alt2="Bomb Beetle" alt2="Bomb Beetle" caption="Here's a caption for comparing images."  >}}

@@ -205,6 +205,87 @@ figure.fig figcaption {
   font-style: italic;
 }
 
+figure.fig-cmp {
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.fig-cmp-images {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.fig-cmp-images img {
+  width: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.fig-cmp-divider {
+  width: 2px;
+  background: --var(color-bg);
+  flex-shrink: 0;
+}
+
+figure.fig-cmp figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.825rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .fig-cmp-images {
+    flex-direction: column;
+  }
+
+  .fig-cmp-images img {
+    width: 100%;
+  }
+
+  .fig-cmp-divider {
+    width: 100%;
+    height: 1px;
+  }
+}
+
+.fig-cmp-side {
+  position: relative;
+  width: 50%;
+  display: flex;
+}
+
+.fig-cmp-side img {
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fig-cmp-label {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .fig-cmp-side {
+    width: 100%;
+  }
+}
+
 /* Copy button */
 
 .copy-btn {
