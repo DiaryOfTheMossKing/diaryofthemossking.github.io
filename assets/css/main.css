@@ -3,13 +3,12 @@
 
 
 :root {
-  --color-bg:     #f9f6f0;
-  --color-text:   #1a1a1a;
-  --color-header: #2d5016;
-  --color-link:   #4a7c2f;
-  --color-text-muted: #888888;
+  --color-bg:         #f0ede6;
+  --color-text:       #2a2118; 
+  --color-header:     #3a5c20; 
+  --color-link:       #c45c1a; 
+  --color-text-muted: #8a8478;
 }
-
 /* Fonts */
 
 
@@ -17,13 +16,6 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: "SN Pro", sans-serif;
-  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -54,6 +46,73 @@ header {
 footer {
   text-align: center;
   min-height: 50px;
+}
+
+/*  */
+
+/* Body */
+body {
+  line-height: 1.75;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "SN Pro", sans-serif;
+}
+
+/* Post title */
+article h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+/* Thin line + breathing room under the title/date block */
+.post-header {
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Date */
+.post-date {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Headings inside article — more air above, less below */
+article h2 {
+  font-size: 1.3rem;
+  margin-top: 2.5rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+article h3 {
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+article h4 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+  color: var(--color-text-muted);
+}
+
+/* Paragraph spacing */
+article p {
+  margin-bottom: 1.25rem;
+}
+
+/* Back link */
+.back-link {
+  display: inline-block;
+  margin-bottom: 2.5rem;
+  font-size: 0.8125rem;
 }
 
 /* Font colours */
