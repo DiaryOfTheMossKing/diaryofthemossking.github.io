@@ -1,0 +1,12 @@
+baseURL = 'https://diaryofthemossking.github.io/'
+locale = 'en-us'
+title = 'Diary of the Moss King'
+
+[markup]
+  [markup.highlight]
+    style = "dracula"
+    noClasses = false
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'

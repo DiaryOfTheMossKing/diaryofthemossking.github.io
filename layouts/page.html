@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <div class="backBtn">
+    <a href="{{ "/" | relURL }}" class="back-link">← Home</a>
+  </div>
+
+  <h1 class="mainTitle">{{ .Title }}</h1>
+
+  <span class="muted">
+    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
+    {{ $dateHuman := .Date | time.Format ":date_long" }}
+    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+  </span>
+
+  <br><br><br>
+
+  {{ .Content }}
+{{ end }}

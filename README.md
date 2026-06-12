@@ -1,1 +1,0 @@
-# diaryofthemossking.github.io
