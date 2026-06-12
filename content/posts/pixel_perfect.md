@@ -18,7 +18,7 @@ The main idea is working with two separate rendering layers. The game world rend
 
 This means we can have animated buttons with a modern font animating at the native resolution, while the game itself can run in the smaller 480 x 270 resolution where the art and gameplay is computed.
 
-```
+```asm
 World (Node2D)
 ├── WorldCanvas (CanvasLayer)
 │   └── SubViewportContainer  [stretch = true, stretch_shrink = 4]
@@ -46,7 +46,7 @@ A simple fix is to take `snap_2d_transforms_to_pixel` and set it to `false`. Thi
 
 Our fix to get the best of both worlds is to introduce a second subviewport for the particles to live in while keeping everything else in the snapped viewport. The workflow is roughly:
 
-```
+```asm
 WorldCanvas (CanvasLayer)
 ├── SubViewportContainer  [stretch_shrink = 4]
 │   └── SubViewport  [snap_2d_transforms_to_pixel = true]
@@ -106,7 +106,7 @@ Luckily, the fix is simple, you can set one last setting in the shadow viewport:
 
 Putting this all together, we have the following structure to our `World` node:
 
-```
+```asm
 World (Node2D)
  ├── WorldCanvas (CanvasLayer)
     ├── SubViewportContainer  [stretch = true, stretch_shrink = 4]
