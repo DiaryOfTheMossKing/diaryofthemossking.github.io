@@ -52,11 +52,11 @@ This is, we think, where we found our first Godot bug, which is being tracked in
 
 The problem arises when we attach a `GPUParticle2D` node to the player and emit particles as the player moves through the game. These particles are really useful for adding a little flair or "juice" to movements, from simple dust animations when you land to complex particles we emit when you successfully complete some complex jump. 
 
-I don't fully appreciate the bug (otherwise I would have made a PR fixing it) but the rough issue seems to come down to async behaviour between how GPU particles move and how the CPU applies the pixel snapping. We find that the particles are moving correctly providing the parent stands still, but as soon as the player (or other moving node) changes position, the particle's screen positions get snapped to the pixel grid independently of their parent each frame. As a result, particles seem to jitter out of and into pixel alignment every frame causing this jitter effect:
+I don't fully appreciate the bug (otherwise I would have tried making a pull request to fix it directly) but the rough issue seems to come down to async behaviour between how GPU particles move and how the CPU applies the pixel snapping. We find that the particles are moving correctly providing the parent stands still, but as soon as the player (or any node as a parent) changes position, the particle's screen position get snapped to the pixel grid *after* they are rendered with sub-pixel movement. As a result, particles seem to jitter into and out of pixel alignment causing this jitter effect:
 
 {{< todo text="Show bad jittering." >}}
 
-A simple fix is to take `snap_2d_transforms_to_pixel` and set it to `false`. This removes the jittering, but reintroduces the visual bug of walking on subpixels. 
+Of course the simple fix is to take `snap_2d_transforms_to_pixel` and set it to `false`. This removes the jittering, but reintroduces the visual bug of walking on subpixels. 
 
 Our fix was to try and capture the best of both worlds by introducing a second `SubViewport` for the particles to live in while keeping everything else in the snapped game `SubViewport`. The workflow is roughly:
 
@@ -70,7 +70,9 @@ WorldCanvas (CanvasLayer)
         └── Shadow (Node2D)
 ```
 
-The `Shadow` node has the following code which clamps its position to the player while shifting the viewport around if the camera has moved it in the main viewport
+For us, we wanted to also keep all the pixel logic unchanged, with the idea that if this bug gets patched we can revert this work around with the minimal changes to the game logic.
+
+To sync everything up, the `Shadow` node (just a simple `Node2D`) has the following code which clamps its position to the player while shifting the viewport it lives within to ensure that both the viewport of the main and shadow regions match up.
 
 ```gdscript
 func _physics_process(_delta: float) -> void:
@@ -82,7 +84,9 @@ func _physics_process(_delta: float) -> void:
     get_viewport().canvas_transform = main_vp.canvas_transform
 ```
 
-Then, we can keep all the particle nodes and function calls in the `player.gd` script as long as we call
+{{< info title="Comment" text="If we had multiple shadows, then it would be better to move the viewport logic out onto the `SubViewport itself, which we might do if we need multiple shadows. The current fix was the minimal change needed to get the particles on the player to behave nicely.`." >}}
+
+With the `Shadow` moving with the player, we now want to remove all particles from the `Player` and move them to the `Shadow`. We can pass them by reference at runtime which allows all the particle code (e.g. setting particles to emit) within the `player.gd` script providing we move everything out in the following way:
 
 
 ```gdscript
@@ -91,9 +95,12 @@ func _ready() -> void
     _send_particles_to_shadow()
 
 func _send_particles_to_shadow() -> void:
+    # Clear any particles from previous player instances
     for child in GameManager.shadow.get_children():
         if child is GPUParticles2D:
             child.queue_free()
+
+    # Move all GPUParticle2D nodes to the player
     for child in particles.get_children():
         if not child is GPUParticles2D:
             continue
@@ -101,20 +108,31 @@ func _send_particles_to_shadow() -> void:
         GameManager.shadow.add_child(child)
 ```
 
-When the player spawns, we pass by reference every `GPUParticle2D` from the player to the shadow, and the particles can emit and follow the player in a separate viewport and as we have disabled pixel snapping in the shadow all jittering has been removed.
+Now, when the player spawns, we pass by reference every `GPUParticle2D` from the player to the shadow, and the particles can emit and follow the player in a separate viewport. As we have disabled pixel snapping in the shadow `SubViewport` all jittering has been removed and nothing else needs to change!
 
-{{< fig src="/gifs/BombBeetle.gif" alt="Bomb Beetle" caption="Here's a caption about the bomb beetle." >}}
+{{< todo text="Show good particle effects." >}}
 
-## Opacity Issues
+## Alpha Blending between Viewports
 
-For the particles to live on top of the game, we need to set the background of `ShadowViewport` to be transparent. If nothing else is changed, we find that instead of blending into the background, particles intended to fade out instead fade to black:
+For the particles to live on top of the game viewport, we need to set the background of `ShadowViewport` to be transparent to ensure everything passes through. At this point, if nothing else is changed, if the alpha value is sent to zero (fades out opacity) we find that instead of blending into the background `SubViewport`, particles intended to fade out instead fade to black:
 
-The fix for this is to change the blend mode of the rendering, which we can do by changing the `blend_mode` of the `ShadowSubViewportContainer` to `BLEND_MODE_PREMULT_ALPHA`. This allows all the alpha values to be rendered correctly, except we found they weren't in the game?
+{{< todo text="Show fade to black" >}}
 
-The problem was made into a [GitHub issue](https://github.com/godotengine/godot/issues/120135) although it's not obviously a bug. The problem was that we had a `WorldEnvironment` node in `CANVAS` mode in the main game. The use of this affected both subviewports and for some reason changed the alpha blending. The fact alpha blending is affected seems to be a bug, but this hasn't been decided yet.
+The fix for this is to change the blend mode of the rendering of the `ShadowSubViewport`, which we can do easily in Godot by changing the `blend_mode` of the `ShadowSubViewportContainer` to `BLEND_MODE_PREMULT_ALPHA`. 
 
-Luckily, the fix is simple, you can set one last setting in the shadow viewport:
-`own_world_3d = true` which stops the `WorldEnvironment` from the game viewport interacting with the pixels at all.
+{{< todo text="Show the setting within the inspector" >}}
+
+This allows all the alpha values to be rendered correctly between the two `SubViewports`... or at least it should. When we implemented this the particles looked exactly the same!
+
+After some digging around, we found that the viewport alpha blending was being modified due to the presence of the `WorldEnvironment` node using `CANVAS` mode in the main game.
+
+{{< todo text="Show with and without the `WorldEnvironment`" >}}
+
+We filed a [GitHub issue](https://github.com/godotengine/godot/issues/120135) about this, but it's not obviously a bug.
+
+Luckily, the fix is simple, you can set one last setting in the shadow viewport: `own_world_3d = true`. This stops the `WorldEnvironment` from the game `SubViewport` interacting with the shadow `SubViewport` and the alpha blending remains in the `premultiply` setting
+
+{{< todo text="Show it working as intended" >}}
 
 ## Current Solution
 
@@ -133,5 +151,7 @@ World (Node2D)
     └── fonts, HUD, menus...
 ```
 
-As we keep making the game, I'm sure this will get more complex (or less if we learn how to use Godot better) but for now we're really happy with how everything is looking!
+As we keep making the game, I'm sure this will get more complex (or less complex if we learn how to use Godot better!) but for now we're really happy with how everything is looking!
+
+{{< todo text="Include a final picture" >}}
 
