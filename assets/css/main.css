@@ -84,6 +84,16 @@ article strong {
   line-height: 1.7;
 }
 
+.post-header {
+  margin-bottom: 5rem;
+}
+
+@media (max-width: 600px) {
+  .post-header {
+    margin-bottom: 1rem;
+  }
+}
+
 .post-list {
   list-style: none;
   padding: 0;
@@ -463,6 +473,8 @@ code, pre {
 .highlight pre {
   margin: 0;
   background: transparent;
+  tab-size: 4;
+  -moz-tab-size: 4;
 }
 
 .highlight code {
@@ -472,10 +484,16 @@ code, pre {
 
 code {
   background: #ebe3d8;
-  color: #6b665d;
+  color: #4f380d;
   padding: 0.15em 0.4em;
   border-radius: 4px;
   font-size: 0.875em;
+}
+
+@media (max-width: 800px) {
+  ol, ul {
+    margin-left: 20px;
+  }
 }
 
 @media (max-width: 600px) {

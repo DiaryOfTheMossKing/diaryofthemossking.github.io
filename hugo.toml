@@ -9,7 +9,11 @@ title = 'Little Lemon Studios'
   [markup.highlight]
     style = "dracula"
     noClasses = false
+  [markup.goldmark]
+    [markup.goldmark.rendered]
+      tabWidth = 4
 
 [caches]
   [caches.images]
     dir = ':cacheDir/images'
+
