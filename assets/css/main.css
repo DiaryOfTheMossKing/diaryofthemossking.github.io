@@ -348,8 +348,9 @@ figure.fig-cmp figcaption {
 
 .copy-btn {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
   font-size: 0.75rem;
   padding: 0.25rem 0.6rem;
   border-radius: 4px;
@@ -443,6 +444,11 @@ code, pre {
     "MONO" 1;
 }
 
+.highlight-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
 .highlight {
   background: #24273a;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -450,7 +456,7 @@ code, pre {
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.35;
   margin: 1.5rem 0;
 }
 

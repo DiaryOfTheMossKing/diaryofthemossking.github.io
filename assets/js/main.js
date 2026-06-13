@@ -2,12 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Copy buttons
   document.querySelectorAll('.highlight').forEach(block => {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'highlight-wrapper'
+    block.parentNode.insertBefore(wrapper, block)
+    wrapper.appendChild(block)
+
     const button = document.createElement('button')
     button.className = 'copy-btn'
     button.textContent = 'Copy'
-
-    block.style.position = 'relative'
-    block.appendChild(button)
+    wrapper.appendChild(button)
 
     button.addEventListener('click', () => {
       const code = block.querySelector('code').innerText
