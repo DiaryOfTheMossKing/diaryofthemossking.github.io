@@ -1,10 +1,19 @@
 {{ define "main" }}
-  <h1 class="titleHeader">{{ .Title }}</h1>
-  {{ .Content }}
+{{ partial "back_btn.html" . }}
+
+<h2 class="post-list-header">Posts</h2>
+{{ .Content }}
+
+<ul class="post-list">
   {{ range .Pages }}
-    <section>
-      <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-      {{ .Summary }}
-    </section>
+  <li class="post-item">
+    <a href="{{ .Permalink }}" class="post-item-title">{{ .Title }}</a>
+    <time class="post-date">{{ .Date.Format "2 January 2006" }}</time>
+    {{ with .Params.description }}
+    <p class="post-description">{{ . }}</p>
+    {{ end }}
+    {{ partial "tags.html" . }}
+  </li>
   {{ end }}
+</ul>
 {{ end }}
