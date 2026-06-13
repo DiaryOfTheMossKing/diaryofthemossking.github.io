@@ -84,7 +84,7 @@ func _physics_process(_delta: float) -> void:
     get_viewport().canvas_transform = main_vp.canvas_transform
 ```
 
-{{< idea title="Comment" text="If we had multiple shadows, then it would be better to move the viewport logic out onto the `SubViewport itself, which we might do if we need multiple shadows. The current fix was the minimal change needed to get the particles on the player to behave nicely.`." >}}
+{{< idea title="Comment" text="If we had multiple shadows, then it would be better to move the viewport logic out onto the SubViewport itself, which we might do if we need multiple shadows. The current fix was the minimal change needed to get the particles on the player to behave nicely." >}}
 
 With the `Shadow` moving with the player, we now want to remove all particles from the `Player` and move them to the `Shadow`. We can pass them by reference at runtime which allows all the particle code (e.g. setting particles to emit) within the `player.gd` script providing we move everything out in the following way:
 
